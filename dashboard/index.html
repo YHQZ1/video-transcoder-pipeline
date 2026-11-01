@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transcoder Pipeline Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="rail" aria-label="Pipeline stages">
+    <div class="brand">
+      <div class="brand-mark" id="brandMark"></div>
+      <div><div class="brand-name">Transcoder</div><div class="brand-sub">Delivery pipeline</div></div>
+    </div>
+    <div class="rail-label">Stages</div>
+    <nav id="nav"></nav>
+    <div class="rail-foot">DevOps Lab TE7950<br>ESE Set 07</div>
+  </aside>
+
+  <main>
+    <header class="top">
+      <div>
+        <h1>Video Transcoding Pipeline</h1>
+        <p class="lede">Continuous delivery to validate, containerize and orchestrate the media transcoding microservice on Kubernetes.</p>
+      </div>
+      <div class="gen"><span class="k">Evidence collected</span><span id="gen"></span></div>
+    </header>
+
+    <section class="stats" id="stats" aria-label="Summary"></section>
+    <section class="flow" id="flow" aria-label="Pipeline flow"></section>
+    <div id="tasks"></div>
+
+
+  </main>
+</div>
+<noscript>This dashboard needs JavaScript.</noscript>
+<script src="data.js"></script>
+<script src="icons.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

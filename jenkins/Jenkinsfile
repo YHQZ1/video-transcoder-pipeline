@@ -1,0 +1,62 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        timeout(time: 15, unit: 'MINUTES')
+    }
+
+    environment {
+        IMAGE = 'video-encoder'
+        TAG   = "${env.BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Source Fetch') {
+            steps {
+                // Pipeline-from-SCM injects the checkout; otherwise clone the local repo
+                script {
+                    if (env.GIT_URL) { checkout scm }
+                    else { sh 'rm -rf src && git clone /repos/media-encoder src' }
+                }
+                sh 'git -C src log --oneline -3 || git log --oneline -3'
+            }
+        }
+
+        stage('Media Linting') {
+            steps {
+                sh '''
+                    CONF=$(ls src/transcode.conf transcode.conf 2>/dev/null | head -1)
+                    echo "Linting $CONF"
+                    test -s "$CONF"
+                    grep -Eq '^MAX_BITRATE=[0-9A-Za-z]+$' "$CONF"
+                    echo "transcode.conf OK: $(cat $CONF)"
+                '''
+            }
+        }
+
+        stage('Build Transcoder') {
+            steps {
+                sh '''
+                    mkdir -p build/www
+                    echo '<h1>Transcoder Engine Ready</h1>' > build/www/index.html
+                    cat > build/Dockerfile <<'DOCKER'
+FROM alpine:3.20
+RUN apk add --no-cache busybox-extras && echo "Transcoder Engine Ready" > /etc/transcoder-banner && mkdir -p /www
+COPY www/ /www/
+EXPOSE 80
+ENTRYPOINT ["/bin/sh","-c","cat /etc/transcoder-banner; exec httpd -f -p 80 -h /www"]
+DOCKER
+                    docker build -t ${IMAGE}:${TAG} build
+                    docker image ls ${IMAGE}
+                '''
+            }
+        }
+    }
+
+    post {
+        success { echo "Pipeline succeeded: ${IMAGE}:${TAG}" }
+        failure { echo 'Pipeline failed' }
+        always  { archiveArtifacts artifacts: 'build/Dockerfile', allowEmptyArchive: true }
+    }
+}

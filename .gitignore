@@ -1,0 +1,8 @@
+.venv/
+workspace/
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate*
+terraform/transcoder_output.env
+jenkins/.env
+dashboard/data.js

@@ -1,0 +1,19 @@
+# Local-only Jenkins for the lab. Start with:
+#   JENKINS_ADMIN_PASSWORD='<choose one>' docker compose up -d --build
+# NOTE: mounting docker.sock gives the Jenkins container control of the host Docker
+# daemon - fine for a throwaway lab box, never for a shared server.
+services:
+  jenkins:
+    build: .
+    container_name: transcoder-jenkins
+    user: root
+    ports:
+      - "127.0.0.1:8080:8080"        # loopback only
+    environment:
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:?set JENKINS_ADMIN_PASSWORD}
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../workspace/media-encoder:/repos/media-encoder:ro
+volumes:
+  jenkins_home:

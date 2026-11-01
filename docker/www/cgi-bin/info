@@ -1,0 +1,3 @@
+#!/bin/sh
+printf 'Content-Type: application/json\r\n\r\n'
+printf '{"host":"%s","runtime":"Docker container (alpine)","max_bitrate":"%s"}\n' "$(hostname)" "${MAX_BITRATE:-4K}"
